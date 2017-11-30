@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>BMEG</title>
+    <link>https://bmeg.github.io/</link>
+    <description>Recent content on BMEG</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    
+	<atom:link href="https://bmeg.github.io/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Building Graph</title>
+      <link>https://bmeg.github.io/building/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://bmeg.github.io/building/</guid>
+      <description> Data Import Active Data Transforms  CCLE GTEX PubMed PFAM HUGO Ensembl CTDD GeneOntology GDSC NCI Pubchem MAF Files PathwayCommons G2P  </description>
+    </item>
+    
+    <item>
+      <title>Data Import</title>
+      <link>https://bmeg.github.io/building/import/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://bmeg.github.io/building/import/</guid>
+      <description>Data Import All data import is done via CWL wrapped docker containers.
+Write the schema From BMEG Phenotype Schema
+message GeneOntologyTerm { string id = 1; string name = 2; string namespace = 3; string definition = 4; string comment = 5; repeated string synonym = 6; repeated string is_a = 7; repeated string alt_id = 8; repeated string subset = 9; repeated string xref = 10; bool is_obsolete = 11; repeated string consider = 12; }  Create Python code based on the schema protoc \ -I .</description>
+    </item>
+    
+    <item>
+      <title>Drug Response</title>
+      <link>https://bmeg.github.io/queries/drug_response/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://bmeg.github.io/queries/drug_response/</guid>
+      <description>Get all CCLE samples all_samples = O.query().has(&amp;quot;gid&amp;quot;, &amp;quot;cohort:CCLE&amp;quot;).outgoing(&amp;quot;hasSample&amp;quot;).values([&amp;quot;gid&amp;quot;]).execute()  Genes we&amp;rsquo;ll be looking at GENES = [&amp;quot;CDKN2A&amp;quot;, &amp;quot;PTEN&amp;quot;, &amp;quot;TP53&amp;quot;, &amp;quot;SMAD4&amp;quot;]  Scan CCLE cell lines based on mutation status mut_samples = {} norm_samples = {} for g in GENES: #get CCLE samples with mutation mut_samples[g] = list(set(O.query().has(&amp;quot;gid&amp;quot;, &amp;quot;gene:%s&amp;quot; % (g)).incoming(&amp;quot;variantInGene&amp;quot;).outgoing(&amp;quot;variantInBiosample&amp;quot;).mark(&amp;quot;a&amp;quot;)\ .incoming(&amp;quot;hasSample&amp;quot;).has(&amp;quot;gid&amp;quot;, &amp;quot;cohort:CCLE&amp;quot;).select(&amp;quot;a&amp;quot;).values([&amp;quot;gid&amp;quot;]).execute())) #get CCLE samples without mutation norm_samples[g] = list(set(all_samples).difference(mut_samples[g])) print &amp;quot;%s Positive Set: %d&amp;quot; % (g, len(mut_samples[g])) print &amp;quot;%s Negative Set: %d&amp;quot; % (g, len(norm_samples[g]))  Get response values for the positive set (samples with mutation) and collect AUC value by drug pos_response = {} for g in GENES: pos_response[g] = {} for row in O.</description>
+    </item>
+    
+    <item>
+      <title>Getting Started</title>
+      <link>https://bmeg.github.io/queries/getting_started/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://bmeg.github.io/queries/getting_started/</guid>
+      <description>Usage Ophion is an API for making graph queries using structured data. Queries are defined using a series of step operations provided by Ophion. The python client wraps the construction of these queries in an intuitive python interface.
+Let&amp;rsquo;s go through the features currently supported in the Ophion python client.
+import First, import the Ophion client and create a connection to an existing Ophion API (here we use the BMEG at OHSU):</description>
+    </item>
+    
+    <item>
+      <title>Install</title>
+      <link>https://bmeg.github.io/queries/install/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://bmeg.github.io/queries/install/</guid>
+      <description> Ophion </description>
+    </item>
+    
+    <item>
+      <title>Matrix</title>
+      <link>https://bmeg.github.io/queries/matrix/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://bmeg.github.io/queries/matrix/</guid>
+      <description> Using BMEG to get matrix data
+import ophion import pandas import json import sys from bmeg.ml_schema_pb2 import Model from google.protobuf import json_format import pandas from scipy import stats from sklearn.linear_model import LinearRegression, LogisticRegression import numpy as np  Download RNA-Seq for cohort:TCGA-READ data = {} for i in O.query().has(&amp;quot;gid&amp;quot;, &amp;quot;cohort:TCGA-READ&amp;quot;).outgoing(&amp;quot;hasSample&amp;quot;).incoming(&amp;quot;expressionFor&amp;quot;).execute(): if &#39;properties&#39; in i and &#39;expressions&#39; in i[&#39;properties&#39;]: data[i[&#39;gid&#39;]] = json.loads(i[&#39;properties&#39;][&#39;expressions&#39;]) expression_matrix = pandas.DataFrame(data).transpose().fillna(0.0)  </description>
+    </item>
+    
+    <item>
+      <title>Protograph</title>
+      <link>https://bmeg.github.io/building/protograph/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://bmeg.github.io/building/protograph/</guid>
+      <description>protograph Transform a stream of messages into a graph
+what is protograph? Protograph is a protocol for transforming messages from any given schema into a set of graph vertexes and edges.
+To do this, you compose a protograph.yml describing how to create vertexes and edges given a message of a variety of shapes (called labels in Protograph).
+Given a well-constructed protograph.yml, input for Protograph is a stream of messages described in a Protocol Buffers schema, and the output is a list of vertexes and edges, in a schema of their own.</description>
+    </item>
+    
+    <item>
+      <title>Queries</title>
+      <link>https://bmeg.github.io/queries/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://bmeg.github.io/queries/</guid>
+      <description> Queries </description>
+    </item>
+    
+    <item>
+      <title>Schema</title>
+      <link>https://bmeg.github.io/building/schema/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://bmeg.github.io/building/schema/</guid>
+      <description> Data Schema Schemas for data in the BMEG are described using ProtoBuffer
+Schemas Used  GA4GH Variants GA4GH Genotype2Phenotype BMEG Clinical data BMEG PFAM BMEG RNA Expression BMEG CNA Events BMEG Genome Description BMEG Phenotype and Drug Response BMEG PubMed BMEG Pathway  Example Schema: Drug Response Data message ResponseSummary { enum SummaryType { UNKNOWN = 0; EC50 = 1; IC50 = 2; LD50 = 3; GR50 = 4; AMAX = 5; AUC = 6; ACTIVITY_AREA = 7; RMSE = 8; } SummaryType type = 1; double value = 2; string unit = 3; } message CompoundElement { string compound = 1; double ratio = 3; } message ResponseCurve { enum ResponseType { UNKNOWN = 0; GROWTH = 1; ACTIVITY = 2; } string gid = 1; ResponseType responseType = 2; repeated DoseResponse values = 3; double growthStandard = 4; repeated CompoundElement compounds = 5; string sample = 6; repeated ResponseSummary summary = 7; repeated double controls = 8; repeated double blanks = 9; }  </description>
+    </item>
+    
+    <item>
+      <title>System</title>
+      <link>https://bmeg.github.io/system/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://bmeg.github.io/system/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Traversal</title>
+      <link>https://bmeg.github.io/queries/traversal/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://bmeg.github.io/queries/traversal/</guid>
+      <description>Traversing the Graph Once you are on a vertex, you can travel through that vertex&amp;rsquo;s edges to find the vertexes it is connected to. Sometimes you don&amp;rsquo;t even need to go all the way to the next vertex, the information on the edge between them may be sufficient.
+Edges in the graph are directional, so there are both incoming and outgoing edges from each vertex, leading to other vertexes in the graph.</description>
+    </item>
+    
+  </channel>
+</rss>
