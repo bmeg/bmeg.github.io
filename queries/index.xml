@@ -36,7 +36,7 @@ import First, import the Ophion client and create a connection to an existing Op
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://bmeg.github.io/queries/install/</guid>
-      <description> Ophion </description>
+      <description> Ophion Python Client pip install ophion  R Client library(devtools) install_github(repo=&amp;quot;bmeg/ophion&amp;quot;, subdir=&amp;quot;client/R&amp;quot;)  </description>
     </item>
     
     <item>
