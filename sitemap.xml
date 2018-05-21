@@ -38,6 +38,10 @@
   </url>
   
   <url>
+    <loc>https://bmeg.github.io/queries/kaplan_meier/</loc>
+  </url>
+  
+  <url>
     <loc>https://bmeg.github.io/queries/matrix/</loc>
   </url>
   
@@ -69,6 +73,10 @@
   
   <url>
     <loc>https://bmeg.github.io/queries/traversal/</loc>
+  </url>
+  
+  <url>
+    <loc>https://bmeg.github.io/updates/</loc>
   </url>
   
 </urlset>

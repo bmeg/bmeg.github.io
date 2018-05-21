@@ -3,7 +3,7 @@
 <head>
   <link href="http://gmpg.org/xfn/11" rel="profile">
   <meta http-equiv="content-type" content="text/html; charset=utf-8">
-  <meta name="generator" content="Hugo 0.31" />
+  <meta name="generator" content="Hugo 0.40.3" />
 
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
@@ -33,13 +33,13 @@
   <div class="global-header">
     <div class="global-header-container">
       <div class="global-header-home">
-        <a href="https://bmeg.github.io/"><h1>BMEG</h1></a>
+        <a href="http://bmeg.io"><h1>BMEG</h1></a>
       </div>
       <ul class="global-header-nav">
           <li><a href="https://bmeg.github.io/queries/">Make Queries</a></li>
           <li><a href="https://bmeg.github.io/building/">Build Graph</a></li>
-          <li><a href="https://github.com/bmeg/">GitHub</a></li>
-          <li><a href="https://gitter.im/bmeg/">Chat</a></li>
+          <li><a target="_blank" href="https://github.com/bmeg/">GitHub</a></li>
+          <li><a target="_blank" href="https://gitter.im/bmeg/">Chat</a></li>
         </ul>
       <div class="global-header-ohsucb">
         <a href="https://www.ohsu.edu/compbio/"><h2>OHSU Comp Bio</h2></a>
@@ -85,6 +85,15 @@
                 <a href="https://bmeg.github.io/queries/traversal/"
                    class="sidebar-nav-item  active"
                 >Traversal</a></li>
+            </ul>
+          </li>
+          
+          <li>
+            <ul class="sidebar-nav sidebar-nav-nested">
+              <li>
+                <a href="https://bmeg.github.io/queries/kaplan_meier/"
+                   class="sidebar-nav-item "
+                >Kaplan Meier Curves</a></li>
             </ul>
           </li>
           
@@ -150,6 +159,13 @@
           >System</a></li>
           
         
+        <li>
+          
+          <a href="https://bmeg.github.io/updates/"
+             class="sidebar-nav-item "
+          >Updates</a></li>
+          
+        
       
     </ul>
   </div>
@@ -157,42 +173,166 @@
   <div class="main col span_8_of_12">
     
 
-<h2 id="traversing-the-graph">Traversing the Graph</h2>
+<h1 id="starting-traversal">Starting Traversal</h1>
 
-<p>Once you are on a vertex, you can travel through that vertex&rsquo;s edges to find the vertexes it is connected to. Sometimes you don&rsquo;t even need to go all the way to the next vertex, the information on the edge between them may be sufficient.</p>
+<h2 id="v-ids">.V([ids])</h2>
 
-<p>Edges in the graph are directional, so there are both incoming and outgoing edges from each vertex, leading to other vertexes in the graph. Edges also have a <em>label</em>, which distinguishes the kind of connections different vertexes can have with one another.</p>
+<p>Start query from Vertex</p>
 
-<p>Starting with gene TP53, and see what kind of other vertexes it is connected to.</p>
-
-<pre><code class="language-python">O.query().has(&quot;symbol&quot;, &quot;TP53&quot;).outgoing().label().groupCount().execute()
+<pre><code class="language-python">O.query().V()
 </code></pre>
 
-<p>Here we have introduced a couple of new steps. The first is <code>.outgoing()</code>. This starts from wherever you are in the graph at the moment and travels out along all the outgoing edges.</p>
+<p>Returns all vertices in graph</p>
 
-<p>By the time we call <code>.label()</code>, we are on these associated vertexes. <code>label</code> just gets the label of the vertex and ignores all the other properties.</p>
-
-<p>At this point we have a bunch of labels. Now we call <code>.groupCount()</code> on these labels to get a tally of what kinds of vertexes our original TP53 gene is connected to.</p>
-
-<pre><code>[{u'Pubmed': 3}]
+<pre><code class="language-python">O.query().V(&quot;vertex1&quot;)
 </code></pre>
 
-<p>In the other direction:</p>
+<p>Returns:</p>
 
-<pre><code class="language-python">O.query().has(&quot;symbol&quot;, &quot;TP53&quot;).incoming().label().groupCount().execute()
+<pre><code class="language-json">{&quot;gid&quot; : &quot;vertex1&quot;, &quot;label&quot;:&quot;TestVertex&quot;, &quot;data&quot;:{}}
 </code></pre>
 
-<p>Here we have swapped out <code>outgoing</code> for <code>incoming</code>, and it turns out that there are a lot more things pointing at TP53 than there are pointing away:</p>
+<h2 id="e">.E()</h2>
 
-<pre><code>[{u'CNASegment': 708,
-  u'GeneDatabase': 12,
-  u'Variant': 8245,
-  u'type': 1}]
+<p>Start query from Edge</p>
+
+<pre><code class="language-python">O.query().E()
 </code></pre>
 
-<p>So, there are 708 copy number segments, 12 gene databases, and 8245 variants. Also, one thing called &ldquo;type&rdquo;.</p>
+<p>Returns all edges in graph</p>
 
-<p>As you can see, this is a good way to explore the graph and construct a good traversal as you go along.</p>
+<h1 id="filtering">Filtering</h1>
+
+<h2 id="where">.where()</h2>
+
+<p>Filter elements using conditional statements</p>
+
+<pre><code class="language-python">O.query().V().where(aql.eq(&quot;_label&quot;, &quot;Gene&quot;)).where(aql.eq(&quot;symbol&quot;, &quot;TP53&quot;))
+</code></pre>
+
+<h2 id="conditions">Conditions</h2>
+
+<p>Conditions are arguments to <code>.where()</code> that define selection conditions</p>
+
+<h3 id="aql-eq-variable-value">aql.eq(variable, value)</h3>
+
+<p>Returns rows where variable == value</p>
+
+<pre><code class="language-python">.where(aql.eq(&quot;symbol&quot;, &quot;TP53&quot;))
+</code></pre>
+
+<h3 id="aql-neq-variable-value">aql.neq(variable, value)</h3>
+
+<p>Returns rows where variable != value</p>
+
+<pre><code class="language-python">.where(aql.neq(&quot;symbol&quot;, &quot;TP53&quot;))
+</code></pre>
+
+<h3 id="aql-gt-variable-value">aql.gt(variable, value)</h3>
+
+<p>Returns rows where variable &gt; value</p>
+
+<pre><code class="language-python">.where(aql.gt(&quot;age&quot;, 45))
+</code></pre>
+
+<h3 id="aql-lt-variable-value">aql.lt(variable, value)</h3>
+
+<p>Returns rows where variable &lt; value</p>
+
+<pre><code class="language-python">.where(aql.lt(&quot;age&quot;, 45))
+</code></pre>
+
+<h3 id="aql-gte-variable-value">aql.gte(variable, value)</h3>
+
+<p>Returns rows where variable &gt;= value</p>
+
+<pre><code class="language-python">.where(aql.gte(&quot;age&quot;, 45))
+</code></pre>
+
+<h3 id="aql-lte-variable-value">aql.lte(variable, value)</h3>
+
+<p>Returns rows where variable &lt;= value</p>
+
+<pre><code class="language-python">.where(aql.lte(&quot;age&quot;, 45))
+</code></pre>
+
+<h3 id="aql-in-variable-value">aql.in_(variable, value)</h3>
+
+<p>Returns rows where variable in value</p>
+
+<pre><code class="language-python">.where(aql.in_(&quot;symbol&quot;, [&quot;TP53&quot;, &quot;BRCA1&quot;]))
+</code></pre>
+
+<h3 id="aql-contains-variable-value">aql.contains(variable, value)</h3>
+
+<p>Returns rows where variable contains value</p>
+
+<pre><code class="language-python">.where(aql.in_(&quot;groups&quot;, &quot;group1&quot;))
+</code></pre>
+
+<p>Returns:</p>
+
+<pre><code>{&quot;data&quot; : {&quot;groups&quot; : [&quot;group1&quot;, &quot;group2&quot;]}}
+</code></pre>
+
+<h3 id="aql-and-conditions">aql.and_([conditions])</h3>
+
+<pre><code class="language-python">.where(aql.and_( [aql.lte(&quot;age&quot;, 45), aql.gte(&quot;age&quot;, 35)] ))
+</code></pre>
+
+<h3 id="aql-or-conditions">aql.or_([conditions])</h3>
+
+<pre><code class="language-python">.where(aql.or_( [...] ))
+</code></pre>
+
+<h3 id="aql-not-condition">aql.not_(condition)</h3>
+
+<h1 id="output">Output</h1>
+
+<h2 id="mark-name">.mark(name)</h2>
+
+<p>Store current row for future reference</p>
+
+<pre><code class="language-python">O.query().V().mark(&quot;a&quot;).out().mark(&quot;b&quot;)
+</code></pre>
+
+<h2 id="select-names">.select([names])</h2>
+
+<p>Output previously marked elements</p>
+
+<h2 id="limit-count">.limit(count)</h2>
+
+<p>Limit number of total output rows</p>
+
+<h2 id="offset-count">.offset(count)</h2>
+
+<p>Start return after offset</p>
+
+<h2 id="render-template">.render(template)</h2>
+
+<p>Render current selection into arbitrary data structure</p>
+
+<h1 id="traversing-the-graph">Traversing the graph</h1>
+
+<h2 id="in">.in_()</h2>
+
+<h2 id="out">.out()</h2>
+
+<h2 id="both">.both()</h2>
+
+<h2 id="inedge">.inEdge()</h2>
+
+<h2 id="outedge">.outEdge()</h2>
+
+<h2 id="bothedge">.bothEdge()</h2>
+
+<h1 id="aggregation">Aggregation</h1>
+
+<h2 id="aggregate">.aggregate()</h2>
+
+<h2 id="count">.count()</h2>
+
+<h2 id="distinct">.distinct()</h2>
 
   </div>
 

@@ -9,7 +9,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
 
   
-  <title>Getting Started &middot; BMEG</title>
+  <title>Updates &middot; BMEG</title>
   
 
   
@@ -74,7 +74,7 @@
             <ul class="sidebar-nav sidebar-nav-nested">
               <li>
                 <a href="https://bmeg.github.io/queries/getting_started/"
-                   class="sidebar-nav-item  active"
+                   class="sidebar-nav-item "
                 >Getting Started</a></li>
             </ul>
           </li>
@@ -162,7 +162,7 @@
         <li>
           
           <a href="https://bmeg.github.io/updates/"
-             class="sidebar-nav-item "
+             class="sidebar-nav-item  active"
           >Updates</a></li>
           
         
@@ -173,81 +173,98 @@
   <div class="main col span_8_of_12">
     
 
-<h1 id="usage">Usage</h1>
-
-<p>AQL is an API for making graph queries using structured data. Queries are defined using a series of step operations provided by BMEG. The python client wraps the construction of these queries in an intuitive python interface.</p>
-
-<p>Let&rsquo;s go through the features currently supported in the AQL python client.</p>
-
-<h2 id="import">import</h2>
-
-<p>First, import the AQL client and create a connection to an existing AQL API:</p>
-
-<pre><code class="language-python">import aql
-conn = aql.Connection('http://bmeg.io')
-O = conn.graph(&quot;bmeg&quot;)
-</code></pre>
-
-<p>Now that we have an BMEG graph instance, we can use this to make all of our queries.</p>
-
-<h2 id="finding-a-vertex">finding a vertex</h2>
-
-<p>One of the first things you probably want to do is find some vertex out of all of the vertexes available in the system. In order to do this, we need to know something about the vertex we are looking for. To start, let&rsquo;s see if we can find a specific gene:</p>
-
-<pre><code class="language-python">print list(O.query().V().where(aql.eq(&quot;_label&quot;, &quot;Gene&quot;)).where(aql.eq(&quot;symbol&quot;, &quot;TP53&quot;)))
-</code></pre>
-
-<p>A couple things about this first and simplest query. We start with <code>O</code>, our AQL instance connected to the BMEG, and create a new query with <code>.query()</code>. This query is now being constructed. You can chain along as many operations as you want, and nothing will actually get sent to the server until you print the results.</p>
-
-<p>Once we make this query, we get a result:</p>
-
-<pre><code>[&lt;AttrDict(
-  {u'gid': u'gene:ENSG00000141510',
-  u'data': {
-    u'end': 7687550,
-    u'description': u'tumor protein p53 [Source:HGNC Symbol%3BAcc:HGNC:11998]',
-    u'symbol': u'TP53',
-    u'start': 7661779,
-    u'seqId': u'17',
-    u'strand': u'-',
-    u'id': u'ENSG00000141510',
-    u'chromosome': u'17'
-  },
-  u'label': u'Gene'})&gt;
-]
-</code></pre>
-
-<p>This represents the vertex we queried for above. All vertexes in the system will have a similar structure, basically:</p>
+<h2 id="december-5th-2017">December 5th, 2017</h2>
 
 <ul>
-<li><em>gid</em>: This represents the global identifier for this vertex. In order to draw edges between different vertexes from different data sets we need an identifier that can be constructed from available data. Often, the <code>gid</code> will be the field that you query on as a starting point for a traversal.</li>
-<li><em>label</em>: The label represents the type of the vertex. All vertexes with a given label will share many property keys and edge labels, and form a logical group within the system.</li>
-<li><em>data</em>: This is where all the data goes. <code>data</code> can be an arbitrary map, and these properties can be referenced during traversals.</li>
+<li>Data refactor and update</li>
 </ul>
 
-<p>You can also do a <code>where</code> query with a list of items using <code>aql.in_([...])</code> (other conditions exist, see the <code>Conditions</code> section below):</p>
+<h2 id="march-23rd-2017">March 23rd 2017</h2>
 
-<pre><code class="language-python">print list(O.query().V().where(aql.eq(&quot;_label&quot;, &quot;Gene&quot;)).where(aql.in_(&quot;symbol&quot;, [&quot;TP53&quot;, &quot;BRCA1&quot;])).render({&quot;gid&quot;: &quot;_gid&quot;, &quot;symbol&quot;:&quot;symbol&quot;}))
-</code></pre>
+<p>Update:</p>
 
-<p>This returns both Gene vertexes:</p>
+<ul>
+<li>Improving drug sensitivity viewer</li>
+<li>Fixing Javascript for non-chrome browsers</li>
+</ul>
 
-<pre><code>[
-  &lt;AttrDict({u'symbol': u'TP53', u'gid': u'gene:ENSG00000141510'})&gt;,
-  &lt;AttrDict({u'symbol': u'BRCA1', u'gid': u'gene:ENSG00000012048'})&gt;
-]
-</code></pre>
+<h2 id="march-16th-2017">March 16th 2017</h2>
 
-<p>Once you are on a vertex, you can travel through that vertex&rsquo;s edges to find the vertexes it is connected to. Sometimes you don&rsquo;t even need to go all the way to the next vertex, the information on the edge between them may be sufficient.</p>
+<ul>
+<li>Logo Update</li>
+<li>HTML updates to front page</li>
+<li>Faster updates to move data from staging to production</li>
+<li>Added gene target link to compounds</li>
+</ul>
 
-<p>Edges in the graph are directional, so there are both incoming and outgoing edges from each vertex, leading to other vertexes in the graph. Edges also have a <em>label</em>, which distinguishes the kind of connections different vertexes can have with one another.</p>
+<h2 id="march-10th-2017">March 10th 2017</h2>
 
-<p>Starting with gene TP53, and see what kind of other vertexes it is connected to.</p>
+<ul>
+<li>Optimizing Drug sensitivity query widget</li>
+<li>Changed front page to be schema viewer</li>
+<li>Added CNA segments to schema and loaded data from CCLE</li>
+</ul>
 
-<pre><code class="language-python">O.query().V().where(aql.eq(&quot;_label&quot;, &quot;Gene&quot;)).where(aql.eq(&quot;symbol&quot;, &quot;TP53&quot;))
-</code></pre>
+<h2 id="feb-27th-2017">Feb 27th 2017</h2>
 
-<p>Here we have introduced a couple of new steps. The first is <code>.out()</code>. This starts from wherever you are in the graph at the moment and travels out along all the outgoing edges.</p>
+<ul>
+<li>Updating Javascript packaging</li>
+<li>Added CTDD drug response data</li>
+</ul>
+
+<h2 id="feb-23th-2017">Feb 23th 2017</h2>
+
+<ul>
+<li>Fixing mutation pie-chart viewer</li>
+</ul>
+
+<h2 id="jan-29th-2017">Jan 29th 2017</h2>
+
+<ul>
+<li>Added drug sensitivity viewer</li>
+</ul>
+
+<h2 id="january-9-2017">January 9, 2017</h2>
+
+<p><a href="https://www.cancer.gov/about-nci/organization/ccg/blog/2017/tcga-pancan-atlas">TCGA to Complete its Final Analysis: the PanCanAtlas</a></p>
+
+<h2 id="jan-6th-2017">Jan 6th 2017</h2>
+
+<ul>
+<li>Added vertex viewer</li>
+</ul>
+
+<h2 id="december-13-2016">DECEMBER 13, 2016</h2>
+
+<p><a href="https://blog.dnanexus.com/2016-12-13-dnanexus-tcga-reanalyzing-the-worlds-largest-pan-cancer-initiative-dataset/">DNANEXUS &amp; TCGA: REANALYZING THE WORLD’S LARGEST PAN-CANCER INITIATIVE DATASET</a></p>
+
+<h2 id="september-06-2016">September 06, 2016</h2>
+
+<p><a href="https://research.googleblog.com/2016/09/reproducible-science-cancer-researchers.html">Reproducible Science: Cancer Researchers Embrace Containers in the Cloud</a></p>
+
+<h2 id="july-14-2016">July 14, 2016</h2>
+
+<p><a href="https://news.ucsc.edu/2016/07/rna-challenge.html">Research competition to unravel how cancer changes a cell’s RNA</a></p>
+
+<h2 id="nov-16th-2015">Nov 16th 2015</h2>
+
+<p><a href="https://www.eurekalert.org/pub_releases/2015-11/oifc-itl111615.php">International team launches community competition to understand tumor origins and evolution</a></p>
+
+<h2 id="may-18-2015">May 18, 2015</h2>
+
+<p><a href="https://news.ucsc.edu/2015/05/dream-challenge.html">Community effort provides new &lsquo;gold standard&rsquo; for genomic data analysis</a></p>
+
+<h2 id="april-30th-2014">April 30th 2014</h2>
+
+<p><a href="https://cancergenome.nih.gov/newsevents/newsannouncements/SMC_Challenge">The ICGC-TCGA DREAM Somatic Mutation Calling (SMC) Challenge</a></p>
+
+<h2 id="oct-15th-2013">Oct 15th 2013</h2>
+
+<p><a href="https://www.bizjournals.com/sanjose/feature/santa-cruz/2013/10/ucsc-researchers-using-big-data-to.html">UCSC researchers using big data to predict cancer outcomes</a></p>
+
+<h2 id="june-17th-2013">June 17th 2013</h2>
+
+<p><a href="https://news.ucsc.edu/2013/06/cancer-big-data.html">Major grant funds UCSC researchers using big data to predict cancer outcomes</a></p>
 
   </div>
 

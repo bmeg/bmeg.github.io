@@ -3,7 +3,7 @@
 <head>
   <link href="http://gmpg.org/xfn/11" rel="profile">
   <meta http-equiv="content-type" content="text/html; charset=utf-8">
-  <meta name="generator" content="Hugo 0.31" />
+  <meta name="generator" content="Hugo 0.40.3" />
 
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
@@ -33,13 +33,13 @@
   <div class="global-header">
     <div class="global-header-container">
       <div class="global-header-home">
-        <a href="https://bmeg.github.io/"><h1>BMEG</h1></a>
+        <a href="http://bmeg.io"><h1>BMEG</h1></a>
       </div>
       <ul class="global-header-nav">
           <li><a href="https://bmeg.github.io/queries/">Make Queries</a></li>
           <li><a href="https://bmeg.github.io/building/">Build Graph</a></li>
-          <li><a href="https://github.com/bmeg/">GitHub</a></li>
-          <li><a href="https://gitter.im/bmeg/">Chat</a></li>
+          <li><a target="_blank" href="https://github.com/bmeg/">GitHub</a></li>
+          <li><a target="_blank" href="https://gitter.im/bmeg/">Chat</a></li>
         </ul>
       <div class="global-header-ohsucb">
         <a href="https://www.ohsu.edu/compbio/"><h2>OHSU Comp Bio</h2></a>
@@ -85,6 +85,15 @@
                 <a href="https://bmeg.github.io/queries/traversal/"
                    class="sidebar-nav-item "
                 >Traversal</a></li>
+            </ul>
+          </li>
+          
+          <li>
+            <ul class="sidebar-nav sidebar-nav-nested">
+              <li>
+                <a href="https://bmeg.github.io/queries/kaplan_meier/"
+                   class="sidebar-nav-item "
+                >Kaplan Meier Curves</a></li>
             </ul>
           </li>
           
@@ -150,6 +159,13 @@
           >System</a></li>
           
         
+        <li>
+          
+          <a href="https://bmeg.github.io/updates/"
+             class="sidebar-nav-item "
+          >Updates</a></li>
+          
+        
       
     </ul>
   </div>
@@ -159,26 +175,33 @@
 
 <h1 id="get-all-ccle-samples">Get all CCLE samples</h1>
 
-<pre><code>all_samples = O.query().has(&quot;gid&quot;, &quot;cohort:CCLE&quot;).outgoing(&quot;hasSample&quot;).values([&quot;gid&quot;]).execute()
+<pre><code>q = O.query().V().where(aql.eq(&quot;_label&quot;, &quot;Biosample&quot;))
+q = q.where(aql.and_(aql.eq(&quot;source&quot;, &quot;ccle&quot;))).render({&quot;id&quot;:&quot;_gid&quot;})
+all_samples = []
+for row in q:
+    all_samples.append(row.id)
 </code></pre>
 
 <h1 id="genes-we-ll-be-looking-at">Genes we&rsquo;ll be looking at</h1>
 
 <pre><code>GENES = [&quot;CDKN2A&quot;, &quot;PTEN&quot;, &quot;TP53&quot;, &quot;SMAD4&quot;]
+gene_ids = {}
+for g in GENES:
+    for i in O.query().V().where(aql.eq(&quot;_label&quot;, &quot;Gene&quot;)).where(aql.eq(&quot;symbol&quot;, g)):
+        gene_ids[g] = i.gid
 </code></pre>
 
 <h1 id="scan-ccle-cell-lines-based-on-mutation-status">Scan CCLE cell lines based on mutation status</h1>
 
 <pre><code>mut_samples = {}
 norm_samples = {}
-for g in GENES:
+for g, i in gene_ids.items():
     #get CCLE samples with mutation
-    mut_samples[g] = list(set(O.query().has(&quot;gid&quot;, &quot;gene:%s&quot; % (g)).incoming(&quot;variantInGene&quot;).outgoing(&quot;variantInBiosample&quot;).mark(&quot;a&quot;)\
-    .incoming(&quot;hasSample&quot;).has(&quot;gid&quot;, &quot;cohort:CCLE&quot;).select(&quot;a&quot;).values([&quot;gid&quot;]).execute()))
+    mut_samples[g] = set(k['gid'] for k in O.query().V(i).in_(&quot;variantIn&quot;).out(&quot;variantCall&quot;).out(&quot;callSetOf&quot;).where(aql.in_(&quot;_gid&quot;, all_samples)).render({&quot;gid&quot;:&quot;_gid&quot;}))
 
     #get CCLE samples without mutation
     norm_samples[g] = list(set(all_samples).difference(mut_samples[g]))
-    
+
     print &quot;%s Positive Set: %d&quot; % (g, len(mut_samples[g]))
     print &quot;%s Negative Set: %d&quot; % (g, len(norm_samples[g]))
 </code></pre>
@@ -188,8 +211,8 @@ for g in GENES:
 <pre><code>pos_response = {}
 for g in GENES:
     pos_response[g] = {}
-    for row in O.query().has(&quot;gid&quot;, O.within(mut_samples[g])).outEdge(&quot;responseToCompound&quot;).mark(&quot;a&quot;).inVertex().mark(&quot;b&quot;).select([&quot;a&quot;, &quot;b&quot;]).execute():
-        for v in json.loads(row['a']['properties']['responseSummary']):
+    for row in O.query().V(mut_samples[g]).in_(&quot;responseFor&quot;).mark(&quot;a&quot;).out(&quot;responseTo&quot;).mark(&quot;b&quot;).select([&quot;a&quot;, &quot;b&quot;]):
+        for v in row['a']['data']['summary']:
             if v['type'] == &quot;AUC&quot;:
                 compound = row['b']['gid']
                 if compound not in pos_response[g]:
@@ -203,9 +226,8 @@ for g in GENES:
 <pre><code>neg_response = {}
 for g in GENES:
     neg_response[g] = {}
-
-    for row in O.query().has(&quot;gid&quot;, O.within(norm_samples[g])).outEdge(&quot;responseToCompound&quot;).mark(&quot;a&quot;).inVertex().mark(&quot;b&quot;).select([&quot;a&quot;, &quot;b&quot;]).execute():
-        for v in json.loads(row['a']['properties']['responseSummary']):
+    for row in O.query().V(norm_samples[g]).in_(&quot;responseFor&quot;).mark(&quot;a&quot;).out(&quot;responseTo&quot;).mark(&quot;b&quot;).select([&quot;a&quot;, &quot;b&quot;]):
+        for v in row['a']['data']['summary']:
             if v['type'] == &quot;AUC&quot;:
                 compound = row['b']['gid']
                 if compound not in neg_response[g]:
@@ -220,22 +242,31 @@ for g in GENES:
 out = []
 for drug in drugs:
     for g in GENES:
-        row = {&quot;drug&quot; : drug, &quot;mutation&quot; : g}
-        mut_values = pos_response[g][drug]
-        norm_values = neg_response[g][drug]
-        if len(mut_values) &gt; 5 and len(norm_values) &gt; 5:
-            s = stats.ttest_ind(mut_values, norm_values, equal_var=False)
-            row[&quot;t-statistic&quot;] = s.statistic
-            row[&quot;t-pvalue&quot;] = s.pvalue
-            s = stats.f_oneway(mut_values, norm_values)
-            row[&quot;a-statistic&quot;] = s.statistic
-            row[&quot;a-pvalue&quot;] = s.pvalue
-            out.append(row)
+        if drug in pos_response[g] and drug in neg_response[g]:
+            row = {&quot;drug&quot; : drug, &quot;mutation&quot; : g}
+            mut_values = pos_response[g][drug]
+            norm_values = neg_response[g][drug]
+            if len(mut_values) &gt; 5 and len(norm_values) &gt; 5:
+                s = stats.ttest_ind(mut_values, norm_values, equal_var=False)
+                row[&quot;t-statistic&quot;] = s.statistic
+                row[&quot;t-pvalue&quot;] = s.pvalue
+                s = stats.f_oneway(mut_values, norm_values)
+                row[&quot;a-statistic&quot;] = s.statistic
+                row[&quot;a-pvalue&quot;] = s.pvalue
+                out.append(row)
 </code></pre>
 
 <h1 id="print-data-sorted-by-statistical-value">Print data sorted by statistical value</h1>
 
 <pre><code>pandas.DataFrame(out, columns=[&quot;drug&quot;, &quot;mutation&quot;, &quot;t-statistic&quot;, &quot;t-pvalue&quot;, &quot;a-statistic&quot;, &quot;a-pvalue&quot;]).sort_values(&quot;a-pvalue&quot;)
+</code></pre>
+
+<h1 id="traversal-direction-optimization">Traversal direction optimization</h1>
+
+<p>Note, there is a slower version of this query:</p>
+
+<pre><code>q = O.query().V(all_samples).in_(&quot;callSetOf&quot;).in_(&quot;variantCall&quot;).out(&quot;variantIn&quot;).where(aql.eq(&quot;gene:ENSG00000141510&quot;, &quot;_gid&quot;)).count()
+#print list(q)
 </code></pre>
 
   </div>
