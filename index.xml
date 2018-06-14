@@ -116,7 +116,7 @@ Schemas Used  GA4GH Variants GA4GH Genotype2Phenotype BMEG Clinical data BMEG PF
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://bmeg.github.io/system/</guid>
-      <description></description>
+      <description>BMEG System The BioMedical Evidence Graph integrates various biological data source into a single property graph to enable easy analysis. The BMEG is powered by the Arachne graph database engine. The current installation covers data from TCGA, CCLE, CTDD, GTEX, Ensembl, PathwayCommons and contains almost 32 million vertices.</description>
     </item>
     
     <item>
@@ -142,7 +142,7 @@ aql.eq(variable, value) Returns rows where variable == value
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://bmeg.github.io/updates/</guid>
-      <description>December 5th, 2017  Data refactor and update  March 23rd 2017 Update:
+      <description>June 14th, 2018  Updated Database engine Arachne v0.2 Updated client install instructions Updated query language instructions Released new iPython Analysis notebook examples New Schema Bulk Data download  December 5th, 2017  Data refactor and update  March 23rd 2017 Update:
  Improving drug sensitivity viewer Fixing Javascript for non-chrome browsers  March 16th 2017  Logo Update HTML updates to front page Faster updates to move data from staging to production Added gene target link to compounds  March 10th 2017  Optimizing Drug sensitivity query widget Changed front page to be schema viewer Added CNA segments to schema and loaded data from CCLE  Feb 27th 2017  Updating Javascript packaging Added CTDD drug response data  Feb 23th 2017  Fixing mutation pie-chart viewer  Jan 29th 2017  Added drug sensitivity viewer  January 9, 2017 TCGA to Complete its Final Analysis: the PanCanAtlas</description>
     </item>
     
