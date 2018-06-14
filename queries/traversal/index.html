@@ -316,23 +316,51 @@
 
 <h2 id="in">.in_()</h2>
 
+<p>Following incoming edges. Optional argument is the edge label (or list of labels) that should be followed. If no argument is provided, all incoming edges.</p>
+
 <h2 id="out">.out()</h2>
+
+<p>Following outgoing edges. Optional argument is the edge label (or list of labels) that should be followed. If no argument is provided, all outgoing edges.</p>
 
 <h2 id="both">.both()</h2>
 
+<p>Following all edges (both in and out). Optional argument is the edge label (or list of labels) that should be followed.</p>
+
 <h2 id="inedge">.inEdge()</h2>
+
+<p>Following incoming edges, but return the edge as the next element. This can be used to inspect edge properties. Optional argument is the edge label (or list of labels) that should be followed. To return back to a vertex, use <code>.in_</code> or <code>.out</code></p>
 
 <h2 id="outedge">.outEdge()</h2>
 
+<p>Following outgoing edges, but return the edge as the next element. This can be used to inspect edge properties. Optional argument is the edge label (or list of labels) that should be followed. To return back to a vertex, use <code>.in_</code> or <code>.out</code></p>
+
 <h2 id="bothedge">.bothEdge()</h2>
+
+<p>Following all edges, but return the edge as the next element. This can be used to inspect edge properties. Optional argument is the edge label (or list of labels) that should be followed. To return back to a vertex, use <code>.in_</code> or <code>.out</code></p>
 
 <h1 id="aggregation">Aggregation</h1>
 
 <h2 id="aggregate">.aggregate()</h2>
 
+<p>Return aggregate counts of field. This can be run at the graph level, without using the <code>.query()</code> method to start a traversal, ie</p>
+
+<pre><code>O.aggregate(aql.term(&quot;test-agg&quot;, &quot;Person&quot;, &quot;name&quot;))
+</code></pre>
+
+<p>Where <code>test-agg</code> is the name of the aggrigation, <code>Person</code> is the vertex label type and <code>name</code> is the field.</p>
+
+<pre><code>O.query().V(&quot;1&quot;).out().aggregate(aql.histogram(&quot;traversal-agg&quot;, &quot;Person&quot;, &quot;age&quot;, 5))
+</code></pre>
+
+<p>Starts on vertex <code>1</code>, goes out and then creates a histogram named <code>traversal-agg</code> across the <code>age</code> field in the <code>Person</code> vertices.</p>
+
 <h2 id="count">.count()</h2>
 
+<p>Return the total count of elements</p>
+
 <h2 id="distinct">.distinct()</h2>
+
+<p>Only return distinct elements. Argument can JSON path to define what elements are used to identify uniqueness.</p>
 
   </div>
 
