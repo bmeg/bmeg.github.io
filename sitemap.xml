@@ -4,79 +4,14 @@
   
   <url>
     <loc>https://bmeg.github.io/</loc>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://bmeg.github.io/building/</loc>
-  </url>
-  
-  <url>
-    <loc>https://bmeg.github.io/building/</loc>
-    <priority>0</priority>
   </url>
   
   <url>
     <loc>https://bmeg.github.io/categories/</loc>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://bmeg.github.io/building/import/</loc>
-  </url>
-  
-  <url>
-    <loc>https://bmeg.github.io/queries/drug_response/</loc>
-  </url>
-  
-  <url>
-    <loc>https://bmeg.github.io/queries/getting_started/</loc>
-  </url>
-  
-  <url>
-    <loc>https://bmeg.github.io/queries/install/</loc>
-  </url>
-  
-  <url>
-    <loc>https://bmeg.github.io/queries/kaplan_meier/</loc>
-  </url>
-  
-  <url>
-    <loc>https://bmeg.github.io/queries/matrix/</loc>
-  </url>
-  
-  <url>
-    <loc>https://bmeg.github.io/building/protograph/</loc>
-  </url>
-  
-  <url>
-    <loc>https://bmeg.github.io/queries/</loc>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://bmeg.github.io/queries/</loc>
-  </url>
-  
-  <url>
-    <loc>https://bmeg.github.io/building/schema/</loc>
-  </url>
-  
-  <url>
-    <loc>https://bmeg.github.io/system/</loc>
   </url>
   
   <url>
     <loc>https://bmeg.github.io/tags/</loc>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://bmeg.github.io/queries/traversal/</loc>
-  </url>
-  
-  <url>
-    <loc>https://bmeg.github.io/updates/</loc>
   </url>
   
 </urlset>
